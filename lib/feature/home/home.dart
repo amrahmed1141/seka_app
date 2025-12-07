@@ -1,0 +1,332 @@
+import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  static const Color primaryBlue = Color(0xFF004AAD);
+  static const Color primaryOrange = Color(0xFFFF751E);
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text(
+            'سِكَّة',
+            style: TextStyle(
+              color: primaryBlue,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Iconsax.notification,
+                      color: primaryBlue,
+                      size: 24,
+                    ),
+                    onPressed: () {
+                      // Handle notification tap
+                    },
+                  ),
+                  Positioned(
+                    left: 12,
+                    top: 12,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: primaryOrange,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+                _buildSearchBar(),
+                _buildSectionTitle('الخدمات الرئيسية'),
+                _buildServicesGrid(context),
+                const SizedBox(height: 16),
+                _buildQuickAccessSection(),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: TextField(
+          textAlign: TextAlign.right,
+          decoration: InputDecoration(
+            hintText: 'ابحث عن خدمة...',
+            hintStyle: TextStyle(color: Colors.grey[400]),
+            suffixIcon: Icon(Iconsax.search_normal_1, color: Colors.grey[400]),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 16,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: primaryBlue,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServicesGrid(BuildContext context) {
+    final services = [
+      ServiceItem(
+        title: 'تعليم القيادة',
+        icon: Iconsax.driving,
+        color: const Color(0xFF4CAF50),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF4CAF50), Color(0xFF66BB6A)],
+        ),
+      ),
+      ServiceItem(
+        title: 'الصيانات الدورية',
+        icon: Iconsax.setting_2,
+        color: primaryBlue,
+        gradient: const LinearGradient(
+          colors: [Color(0xFF004AAD), Color(0xFF1565C0)],
+        ),
+      ),
+      ServiceItem(
+        title: 'طوارئ',
+        icon: Iconsax.danger,
+        color: const Color(0xFFF44336),
+        gradient: const LinearGradient(
+          colors: [Color(0xFFF44336), Color(0xFFE57373)],
+        ),
+      ),
+      ServiceItem(
+        title: 'Marketplace',
+        icon: Iconsax.shop,
+        color: const Color(0xFF9C27B0),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF9C27B0), Color(0xFFBA68C8)],
+        ),
+      ),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 1.0,
+        ),
+        itemCount: services.length,
+        itemBuilder: (context, index) {
+          return _ServiceCard(service: services[index]);
+        },
+      ),
+    );
+  }
+
+  Widget _buildQuickAccessSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'الوصول السريع',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: primaryBlue,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: primaryOrange.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Iconsax.calendar_1,
+                    color: primaryOrange,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'الصيانة القادمة',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'بعد 15 يوم - تغيير زيت',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(
+                  Iconsax.arrow_right_2,
+                  color: primaryBlue,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ServiceItem {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final Gradient gradient;
+
+  ServiceItem({
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.gradient,
+  });
+}
+
+class _ServiceCard extends StatelessWidget {
+  final ServiceItem service;
+
+  const _ServiceCard({required this.service});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('تم الضغط على ${service.title}')),
+          );
+        },
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: service.gradient,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: service.color.withOpacity(0.3),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  service.icon,
+                  size: 40,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                service.title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
