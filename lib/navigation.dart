@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:seka_app/core/theme/app_color.dart';
 import 'package:seka_app/feature/booking/booking.dart';
 import 'package:seka_app/feature/camera/camera.dart';
 import 'package:seka_app/feature/home/home.dart';
@@ -163,7 +164,7 @@ class _NavItem extends StatelessWidget {
     required this.onTap,
   });
 
-  static const Color primaryBlue = Color(0xFF004AAD);
+
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +187,7 @@ class _NavItem extends StatelessWidget {
             child: _NavItemContent(
               index: index,
               isSelected: isSelected,
-              color: isSelected ? primaryBlue : unselectedColor,
+              color: isSelected ? AppColors.primaryOrange : unselectedColor,
             ),
           ),
         ),

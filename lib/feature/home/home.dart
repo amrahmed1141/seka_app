@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:seka_app/core/theme/app_color.dart';
+import 'package:seka_app/feature/drive/learning_drive_screen.dart';
+import 'package:seka_app/feature/emergency/emergency_screen.dart';
+import 'package:seka_app/feature/maintenance/maintenance_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,9 +16,9 @@ class HomeScreen extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: AppColors.lightGrey,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.lightGrey,
           elevation: 0,
           title: const Text(
             'سِكَّة',
@@ -126,35 +130,56 @@ class HomeScreen extends StatelessWidget {
   Widget _buildServicesGrid(BuildContext context) {
     final services = [
       ServiceItem(
+        () {
+         Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const DrivingSchoolScreen()));
+        },
         title: 'تعليم القيادة',
-        icon: Iconsax.driving,
-        color: const Color(0xFF4CAF50),
+        imagePath: 'assets/images/learning.png',
+        color: AppColors.primaryOrange,
         gradient: const LinearGradient(
-          colors: [Color(0xFF4CAF50), Color(0xFF66BB6A)],
+          colors: [ AppColors.primaryOrange, AppColors.primaryOrange],
         ),
       ),
       ServiceItem(
+        () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const MaintenanceScreen()));
+        },
         title: 'الصيانات الدورية',
-        icon: Iconsax.setting_2,
+        imagePath: 'assets/images/service.png',
         color: primaryBlue,
         gradient: const LinearGradient(
           colors: [Color(0xFF004AAD), Color(0xFF1565C0)],
         ),
       ),
       ServiceItem(
+        () {
+         Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const EmergencyScreen()));
+        },
         title: 'طوارئ',
-        icon: Iconsax.danger,
+        imagePath: 'assets/images/emergency.png',
         color: const Color(0xFFF44336),
         gradient: const LinearGradient(
           colors: [Color(0xFFF44336), Color(0xFFE57373)],
         ),
       ),
       ServiceItem(
+        () {
+          // Handle Marketplace tap
+        },
         title: 'Marketplace',
-        icon: Iconsax.shop,
+        imagePath: 'assets/images/marketplace.png',
         color: const Color(0xFF9C27B0),
         gradient: const LinearGradient(
-          colors: [Color(0xFF9C27B0), Color(0xFFBA68C8)],
+          colors: [Colors.green,Colors.green],
         ),
       ),
     ];
@@ -258,15 +283,17 @@ class HomeScreen extends StatelessWidget {
 
 class ServiceItem {
   final String title;
-  final IconData icon;
+  final String imagePath;
   final Color color;
-  final Gradient gradient;
+  final Gradient? gradient;
+  final VoidCallback onTap;
 
-  ServiceItem({
+  ServiceItem(
+    this.onTap, {
     required this.title,
-    required this.icon,
+    required this.imagePath,
     required this.color,
-    required this.gradient,
+     this.gradient,
   });
 }
 
@@ -280,11 +307,7 @@ class _ServiceCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('تم الضغط على ${service.title}')),
-          );
-        },
+        onTap: service.onTap,
         borderRadius: BorderRadius.circular(20),
         child: Container(
           decoration: BoxDecoration(
@@ -301,18 +324,13 @@ class _ServiceCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  service.icon,
-                  size: 40,
+              Image.asset(
+                  service.imagePath,
+                  width: 110,
+                  height: 110,
                   color: Colors.white,
                 ),
-              ),
+             
               const SizedBox(height: 12),
               Text(
                 service.title,
@@ -330,3 +348,4 @@ class _ServiceCard extends StatelessWidget {
     );
   }
 }
+
