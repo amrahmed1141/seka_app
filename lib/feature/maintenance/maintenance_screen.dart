@@ -3,6 +3,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:seka_app/core/theme/app_color.dart';
 import 'package:seka_app/core/data/app_data.dart';
 import 'package:seka_app/core/models/maintenance_center.dart';
+import 'package:seka_app/feature/maintenance/maintenance_center_details_page.dart';
 
 class MaintenanceScreen extends StatefulWidget {
   const MaintenanceScreen({super.key});
@@ -158,7 +159,12 @@ class _MaintenanceCenterCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Handle tap
+       Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => MaintenanceCenterDetailsPage(center: center),
+    ),
+  );
       },
       child: Card(
         color: Colors.white,

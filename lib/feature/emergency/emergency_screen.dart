@@ -3,6 +3,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:seka_app/core/theme/app_color.dart';
 import 'package:seka_app/core/data/app_data.dart';
 import 'package:seka_app/core/models/emergency_service.dart';
+import 'package:seka_app/feature/emergency/emergency_service_details_page.dart';
 
 class EmergencyScreen extends StatefulWidget {
   const EmergencyScreen({super.key});
@@ -20,7 +21,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
     }
     return AppData.emergencyServices.where((service) {
       return service.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          (service.area?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
+          (service.area?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
+              false);
     }).toList();
   }
 
@@ -42,7 +44,8 @@ class _EmergencyScreenState extends State<EmergencyScreen> {
           elevation: 0,
           centerTitle: true,
           leading: IconButton(
-            icon: const Icon(Iconsax.arrow_right_3, color: AppColors.primaryBlue),
+            icon:
+                const Icon(Iconsax.arrow_right_3, color: AppColors.primaryBlue),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -157,7 +160,12 @@ class _EmergencyServiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Handle tap
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => EmergencyServiceDetailsPage(service: service),
+          ),
+        );
       },
       child: Card(
         color: Colors.white,

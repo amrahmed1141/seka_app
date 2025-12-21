@@ -3,6 +3,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:seka_app/core/theme/app_color.dart';
 import 'package:seka_app/core/data/app_data.dart';
 import 'package:seka_app/core/models/driving_school.dart';
+import 'package:seka_app/feature/drive/driving_school_details_page.dart';
 
 class DrivingSchoolScreen extends StatefulWidget {
   const DrivingSchoolScreen({super.key});
@@ -157,7 +158,12 @@ class _DrivingSchoolCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Handle tap
+       Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => DrivingSchoolDetailsPage(school: school),
+    ),
+  );
       },
       child: Card(
         color: Colors.white,
