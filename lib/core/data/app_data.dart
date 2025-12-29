@@ -1,3 +1,5 @@
+import 'package:seka_app/core/models/marketplace_item.dart';
+
 import '../models/maintenance_center.dart';
 import '../models/driving_school.dart';
 import '../models/emergency_service.dart';
@@ -111,6 +113,7 @@ class AppData {
   static final List<EmergencyService> emergencyServices = [
     EmergencyService(
       id: 'es_001',
+      hasWhatsApp: true,
       name: 'ونش نقل وإنقاذ سيارات',
       phones: ['01030700959', '01015601547', '01273739000', '01273738000'],
       type: EmergencyServiceType.towing,
@@ -119,6 +122,7 @@ class AppData {
     EmergencyService(
       id: 'es_002',
       name: 'ونش متخصص - مصر الجديدة',
+      hasWhatsApp: true,
       phones: ['01013181661', '01222157771', '01222157772'],
       type: EmergencyServiceType.towing,
       area: 'مصر الجديدة والأماكن الحيوية',
@@ -127,6 +131,7 @@ class AppData {
     EmergencyService(
       id: 'es_003',
       name: 'خدمات نقل',
+      hasWhatsApp: true,
       phones: ['01121171612'],
       type: EmergencyServiceType.towing,
       imageUrl: 'assets/images/emergency/e2.jpeg',
@@ -143,6 +148,7 @@ class AppData {
       id: 'es_005',
       name: 'خدمة إنقاذ عامة',
       phones: ['01025940878', '01157778900'],
+      hasWhatsApp: true,
       type: EmergencyServiceType.general,
       imageUrl: 'assets/images/emergency/e1.jpeg',
     ),
@@ -151,12 +157,14 @@ class AppData {
       name: 'Koraik - خدمة متنقلة',
       phones: ['01025407646', '01200560982'],
       type: EmergencyServiceType.mobile,
+      hasWhatsApp: true,
       description: 'خدمات متنقلة وصيانة سريعة',
       imageUrl: 'assets/images/emergency/e2.jpeg',
     ),
     EmergencyService(
       id: 'es_007',
       name: 'El Rehany Service Center',
+      hasWhatsApp: true,
       phones: ['01501426677', '01501436677'],
       type: EmergencyServiceType.mobile,
       description: 'خدمات متنقلة وصيانة سريعة',
@@ -167,6 +175,7 @@ class AppData {
       name: 'Modern Services Group',
       phones: ['01001249765', '01211492280', '01155722142'],
       type: EmergencyServiceType.mobile,
+      hasWhatsApp: true,
       description: 'خدمات متنقلة وصيانة سريعة',
       imageUrl: 'assets/images/emergency/e1.jpeg',
     ),
@@ -175,6 +184,7 @@ class AppData {
       name: 'MBR Car Service',
       phones: ['01018200182'],
       type: EmergencyServiceType.mobile,
+      hasWhatsApp: true,
       description: 'خدمة سيارة متنقلة',
       imageUrl: 'assets/images/emergency/e2.jpeg',
     ),
@@ -182,10 +192,53 @@ class AppData {
       id: 'es_010',
       name: 'مركز الألماني',
       phones: ['01224727111', '01110300121'],
+      hasWhatsApp: true,
       type: EmergencyServiceType.mobile,
       description: 'مركز صيانة يوفر طوارئ على الطريق',
       imageUrl: 'assets/images/emergency/e3.jpeg',
     ),
   ];
+  // Marketplace Items (Audi / BMW / Mercedes-Benz only)
+  static final List<MarketplaceItem> marketplaceItems = [
+    const MarketplaceItem(
+      id: 'mp_001',
+      title: 'فلتر زيت Audi A4 / A6 (Original)',
+      brand: 'Audi',
+      area: 'القاهرة',
+      price: 2.5,
+      phone: '01000000000',
+      whatsapp: '01000000000',
+      tags: ['Audi', 'فلتر', 'زيت', 'أصلي'],
+      description: 'فلتر زيت أصلي مناسب لـ A4 / A6. متوفر تركيب.',
+      imageUrl: 'assets/images/audicar.png',
+      logoUrl: 'assets/images/audi.jpg',
+      locationUrl: 'https://maps.app.goo.gl/xxxx',
+    ),
+    const MarketplaceItem(
+      id: 'mp_002',
+      title: 'تيل فرامل أمامي BMW 3 / 5 Series (Bosch)',
+      brand: 'BMW',
+      area: 'مدينة نصر',
+      price: 3,
+      phone: '01011111111',
+      whatsapp: '01011111111',
+      tags: ['BMW', 'فرامل', 'قطع غيار', 'أصلي'],
+      description: 'تيل فرامل أمامي Bosch مناسب لعدة موديلات من BMW.',
+      imageUrl: 'assets/images/bmwcar_card.png',
+      logoUrl: 'assets/images/bmw.jpg',
+    ),
+    const MarketplaceItem(
+      id: 'mp_003',
+      title: 'بطارية Mercedes-Benz AGM 80Ah',
+      brand: 'Mercedes-Benz',
+      area: 'التجمع',
+      price: 3.5,
+      phone: '01022222222',
+      whatsapp: '01022222222',
+      tags: ['Mercedes-Benz', 'بطاريات', 'AGM', 'ضمان'],
+      description: 'بطارية AGM بضمان + تركيب مجاني (حسب المنطقة).',
+      imageUrl: 'assets/images/benzcar_card.png',
+      logoUrl: 'assets/images/benz.jpg',
+    ),
+  ];
 }
-

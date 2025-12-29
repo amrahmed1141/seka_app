@@ -18,13 +18,59 @@ class EmergencyServiceDetailsPage extends StatelessWidget {
   }
 
   Future<void> _openWhatsApp(BuildContext context, String phone) async {
-    // ✅ WhatsApp deep link
     final normalized = phone.replaceAll(' ', '');
     final uri = Uri.parse('https://wa.me/$normalized');
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('تعذر فتح واتساب')),
       );
+    }
+  }
+
+  Future<void> _chooseAndCall(BuildContext context) async {
+    if (service.phones.length == 1) {
+      await _callPhone(context, service.phones.first);
+      return;
+    }
+
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (_) => _PhoneChooserSheet(
+        title: 'اختر رقم الاتصال',
+        icon: Iconsax.call_calling,
+        phones: service.phones,
+      ),
+    );
+
+    if (selected != null) {
+      await _callPhone(context, selected);
+    }
+  }
+
+  Future<void> _chooseAndWhatsApp(BuildContext context) async {
+    if (service.phones.length == 1) {
+      await _openWhatsApp(context, service.phones.first);
+      return;
+    }
+
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (_) => _PhoneChooserSheet(
+        title: 'اختر رقم واتساب',
+        icon: Iconsax.message,
+        phones: service.phones,
+        iconColor: Colors.green,
+      ),
+    );
+
+    if (selected != null) {
+      await _openWhatsApp(context, selected);
     }
   }
 
@@ -64,10 +110,9 @@ class EmergencyServiceDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firstPhone = service.phones.isNotEmpty ? service.phones.first : '';
-
-    final desc = (service.description != null && service.description!.trim().isNotEmpty)
-        ? service.description!.trim()
+    final desc = (service.description != null &&
+            service.description!.trim().isNotEmpty)
+        ? service.description!
         : 'لا يوجد وصف لهذه الخدمة حالياً.';
 
     return Directionality(
@@ -75,7 +120,7 @@ class EmergencyServiceDetailsPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
 
-        // ✅ Bottom Buttons (Call + WhatsApp if available)
+        // ===== Bottom Buttons =====
         bottomNavigationBar: SafeArea(
           child: Container(
             padding: const EdgeInsets.all(16),
@@ -100,12 +145,12 @@ class EmergencyServiceDetailsPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    onPressed: firstPhone.isEmpty
+                    onPressed: service.phones.isEmpty
                         ? null
-                        : () => _callPhone(context, firstPhone),
-                    icon: const Icon(Iconsax.call, size: 18),
+                        : () => _chooseAndCall(context),
+                    icon: const Icon(Iconsax.call),
                     label: const Text(
-                      "اتصال",
+                      'اتصال',
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -125,12 +170,13 @@ class EmergencyServiceDetailsPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    onPressed: (service.hasWhatsApp == true && firstPhone.isNotEmpty)
-                        ? () => _openWhatsApp(context, firstPhone)
+                    onPressed: (service.hasWhatsApp == true &&
+                            service.phones.isNotEmpty)
+                        ? () => _chooseAndWhatsApp(context)
                         : null,
-                    icon: const Icon(Iconsax.message, size: 18),
+                    icon: const Icon(Iconsax.message),
                     label: const Text(
-                      "واتساب",
+                      'واتساب',
                       style: TextStyle(fontWeight: FontWeight.w700),
                     ),
                   ),
@@ -144,7 +190,7 @@ class EmergencyServiceDetailsPage extends StatelessWidget {
           backgroundColor: Colors.white,
           elevation: 0,
           title: const Text(
-            "التفاصيل",
+            'التفاصيل',
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 22,
@@ -153,7 +199,8 @@ class EmergencyServiceDetailsPage extends StatelessWidget {
           ),
           centerTitle: true,
           leading: IconButton(
-            icon: const Icon(Iconsax.arrow_right_3, color: AppColors.primaryBlue),
+            icon:
+                const Icon(Iconsax.arrow_right_3, color: AppColors.primaryBlue),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -162,7 +209,7 @@ class EmergencyServiceDetailsPage extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(18, 18, 18, 120),
           children: [
             Hero(
-              tag: service.imageUrl ?? 'assets/images/placeholder.png',
+              tag: service.imageUrl ?? 'placeholder',
               child: Container(
                 height: 270,
                 decoration: BoxDecoration(
@@ -176,17 +223,23 @@ class EmergencyServiceDetailsPage extends StatelessWidget {
                 ),
               ),
             ),
+
             const SizedBox(height: 15),
 
             Text(
               service.name,
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 22),
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 22,
+              ),
             ),
+
             const SizedBox(height: 8),
 
             Row(
               children: [
-                Icon(_typeIcon(service.type), size: 18, color: Colors.grey),
+                Icon(_typeIcon(service.type),
+                    size: 18, color: Colors.grey),
                 const SizedBox(width: 8),
                 Text(
                   _typeLabel(service.type),
@@ -197,14 +250,16 @@ class EmergencyServiceDetailsPage extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                if (service.area != null && service.area!.trim().isNotEmpty)
+                if (service.area != null && service.area!.isNotEmpty)
                   Row(
                     children: [
-                      const Icon(Icons.location_on, size: 18, color: Colors.grey),
+                      const Icon(Icons.location_on,
+                          size: 18, color: Colors.grey),
                       const SizedBox(width: 4),
                       Text(
                         service.area!,
-                        style: const TextStyle(color: Colors.black54, fontSize: 14),
+                        style: const TextStyle(
+                            color: Colors.black54, fontSize: 14),
                       ),
                     ],
                   ),
@@ -214,62 +269,81 @@ class EmergencyServiceDetailsPage extends StatelessWidget {
             const SizedBox(height: 20),
 
             const Text(
-              "أرقام التواصل",
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
-            ),
-            const SizedBox(height: 10),
-
-            Column(
-              children: service.phones.map((p) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: AppColors.lightGrey,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Colors.black12),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Iconsax.call, size: 18, color: Colors.grey),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          p,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => _callPhone(context, p),
-                        icon: const Icon(Iconsax.call_calling, color: AppColors.primaryBlue),
-                      ),
-                      if (service.hasWhatsApp == true)
-                        IconButton(
-                          onPressed: () => _openWhatsApp(context, p),
-                          icon: const Icon(Iconsax.message, color: Colors.green),
-                        ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            ),
-
-            const SizedBox(height: 10),
-
-            const Text(
-              "الوصف",
+              'الوصف',
               style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
             ),
             const SizedBox(height: 6),
-
             Text(
               desc,
-              style: const TextStyle(fontSize: 16, height: 1.6, color: Colors.black54),
+              style: const TextStyle(
+                fontSize: 16,
+                height: 1.6,
+                color: Colors.black54,
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ===== Bottom Sheet Widget =====
+class _PhoneChooserSheet extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final Color iconColor;
+  final List<String> phones;
+
+  const _PhoneChooserSheet({
+    required this.title,
+    required this.icon,
+    required this.phones,
+    this.iconColor = AppColors.primaryBlue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 42,
+                height: 5,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primaryBlue,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ...phones.map(
+                (p) => ListTile(
+                  leading: Icon(icon, color: iconColor),
+                  title: Text(
+                    p,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  trailing:
+                      const Icon(Iconsax.arrow_left_2, color: Colors.grey),
+                  onTap: () => Navigator.pop(context, p),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -4,15 +4,99 @@ import 'package:seka_app/core/theme/app_color.dart';
 import 'package:seka_app/feature/drive/learning_drive_screen.dart';
 import 'package:seka_app/feature/emergency/emergency_screen.dart';
 import 'package:seka_app/feature/maintenance/maintenance_screen.dart';
+import 'package:seka_app/feature/marketplace/marketplace_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   static const Color primaryBlue = Color(0xFF004AAD);
   static const Color primaryOrange = Color(0xFFFF751E);
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<ServiceItem> _services(BuildContext context) => [
+        ServiceItem(
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const DrivingSchoolScreen()),
+            );
+          },
+          title: 'تعليم القيادة',
+          imagePath: 'assets/images/learning.png',
+          color: AppColors.primaryOrange,
+          gradient: const LinearGradient(
+            colors: [AppColors.primaryOrange, AppColors.primaryOrange],
+          ),
+        ),
+        ServiceItem(
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MaintenanceScreen()),
+            );
+          },
+          title: 'الصيانات الدورية',
+          imagePath: 'assets/images/service.png',
+          color: HomeScreen.primaryBlue,
+          gradient: const LinearGradient(
+            colors: [Color(0xFF004AAD), Color(0xFF1565C0)],
+          ),
+        ),
+        ServiceItem(
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const EmergencyScreen()),
+            );
+          },
+          title: 'طوارئ',
+          imagePath: 'assets/images/emergency.png',
+          color: const Color(0xFFF44336),
+          gradient: const LinearGradient(
+            colors: [Color(0xFFF44336), Color(0xFFE57373)],
+          ),
+        ),
+        ServiceItem(
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MarketplaceScreen()),
+            );
+          },
+          title: 'Marketplace',
+          imagePath: 'assets/images/marketplace.png',
+          color: const Color(0xFF9C27B0),
+          gradient: const LinearGradient(
+            colors: [Colors.green, Colors.green],
+          ),
+        ),
+      ];
+
+  List<ServiceItem> _filteredServices(BuildContext context) {
+    final all = _services(context);
+    final q = _searchQuery.trim().toLowerCase();
+    if (q.isEmpty) return all;
+
+    return all.where((s) => s.title.toLowerCase().contains(q)).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final services = _filteredServices(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -23,7 +107,7 @@ class HomeScreen extends StatelessWidget {
           title: const Text(
             'سِكَّة',
             style: TextStyle(
-              color: primaryBlue,
+              color: HomeScreen.primaryBlue,
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
@@ -37,12 +121,10 @@ class HomeScreen extends StatelessWidget {
                   IconButton(
                     icon: const Icon(
                       Iconsax.notification,
-                      color: primaryBlue,
+                      color: HomeScreen.primaryBlue,
                       size: 24,
                     ),
-                    onPressed: () {
-                      // Handle notification tap
-                    },
+                    onPressed: () {},
                   ),
                   Positioned(
                     left: 12,
@@ -51,7 +133,7 @@ class HomeScreen extends StatelessWidget {
                       width: 8,
                       height: 8,
                       decoration: const BoxDecoration(
-                        color: primaryOrange,
+                        color: HomeScreen.primaryOrange,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -69,7 +151,7 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 _buildSearchBar(),
                 _buildSectionTitle('الخدمات الرئيسية'),
-                _buildServicesGrid(context),
+                _buildServicesGrid(services),
                 const SizedBox(height: 16),
                 _buildQuickAccessSection(),
                 const SizedBox(height: 16),
@@ -97,11 +179,22 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         child: TextField(
+          controller: _searchController,
           textAlign: TextAlign.right,
+          onChanged: (value) => setState(() => _searchQuery = value),
           decoration: InputDecoration(
             hintText: 'ابحث عن خدمة...',
             hintStyle: TextStyle(color: Colors.grey[400]),
             suffixIcon: Icon(Iconsax.search_normal_1, color: Colors.grey[400]),
+            prefixIcon: _searchQuery.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Iconsax.close_circle, color: Colors.grey),
+                    onPressed: () {
+                      _searchController.clear();
+                      setState(() => _searchQuery = '');
+                    },
+                  )
+                : null,
             border: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 20,
@@ -121,68 +214,34 @@ class HomeScreen extends StatelessWidget {
         style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: primaryBlue,
+          color: HomeScreen.primaryBlue,
         ),
       ),
     );
   }
 
-  Widget _buildServicesGrid(BuildContext context) {
-    final services = [
-      ServiceItem(
-        () {
-         Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const DrivingSchoolScreen()));
-        },
-        title: 'تعليم القيادة',
-        imagePath: 'assets/images/learning.png',
-        color: AppColors.primaryOrange,
-        gradient: const LinearGradient(
-          colors: [ AppColors.primaryOrange, AppColors.primaryOrange],
+  Widget _buildServicesGrid(List<ServiceItem> services) {
+    if (services.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        child: Center(
+          child: Column(
+            children: [
+              Icon(Iconsax.search_status, size: 70, color: Colors.grey[300]),
+              const SizedBox(height: 12),
+              Text(
+                'لا توجد نتائج',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      ServiceItem(
-        () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const MaintenanceScreen()));
-        },
-        title: 'الصيانات الدورية',
-        imagePath: 'assets/images/service.png',
-        color: primaryBlue,
-        gradient: const LinearGradient(
-          colors: [Color(0xFF004AAD), Color(0xFF1565C0)],
-        ),
-      ),
-      ServiceItem(
-        () {
-         Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const EmergencyScreen()));
-        },
-        title: 'طوارئ',
-        imagePath: 'assets/images/emergency.png',
-        color: const Color(0xFFF44336),
-        gradient: const LinearGradient(
-          colors: [Color(0xFFF44336), Color(0xFFE57373)],
-        ),
-      ),
-      ServiceItem(
-        () {
-          // Handle Marketplace tap
-        },
-        title: 'Marketplace',
-        imagePath: 'assets/images/marketplace.png',
-        color: const Color(0xFF9C27B0),
-        gradient: const LinearGradient(
-          colors: [Colors.green,Colors.green],
-        ),
-      ),
-    ];
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -214,7 +273,7 @@ class HomeScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: primaryBlue,
+              color: HomeScreen.primaryBlue,
             ),
           ),
           const SizedBox(height: 12),
@@ -236,12 +295,12 @@ class HomeScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: primaryOrange.withOpacity(0.1),
+                    color: HomeScreen.primaryOrange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
                     Iconsax.calendar_1,
-                    color: primaryOrange,
+                    color: HomeScreen.primaryOrange,
                     size: 24,
                   ),
                 ),
@@ -270,7 +329,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const Icon(
                   Iconsax.arrow_right_2,
-                  color: primaryBlue,
+                  color: HomeScreen.primaryBlue,
                 ),
               ],
             ),
@@ -293,13 +352,12 @@ class ServiceItem {
     required this.title,
     required this.imagePath,
     required this.color,
-     this.gradient,
+    this.gradient,
   });
 }
 
 class _ServiceCard extends StatelessWidget {
   final ServiceItem service;
-
   const _ServiceCard({required this.service});
 
   @override
@@ -325,12 +383,11 @@ class _ServiceCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                  service.imagePath,
-                  width: 110,
-                  height: 110,
-                  color: Colors.white,
-                ),
-             
+                service.imagePath,
+                width: 110,
+                height: 110,
+                color: Colors.white,
+              ),
               const SizedBox(height: 12),
               Text(
                 service.title,
