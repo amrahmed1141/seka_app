@@ -31,6 +31,6 @@ Main Services
 
 Youtube Channel: https://www.youtube.com/@AmrAhmed-wx5rt
 Instagram Account: https://www.instagram.com/dev_amrr?igsh=Z3E3MHZtMnNlbmZ3&utm_source=qr 
-<img width="1080" height="2400" alt="Screenshot_1765127676" src="https://github.com/user-attachments/assets/f22bc88f-c533-4d9e-90b0-b0c6eb5e13d7" />
-<img width="1080" height="2400" alt="Screenshot_1765128430" src="https://github.com/user-attachments/assets/fa115a00-9f2b-40bd-ac6e-1fb24c36626b" />
-<img width="1080" height="2400" alt="Screenshot_1765127641" src="https://github.com/user-attachments/assets/1e7323e9-5ac9-4695-b98d-882779c547a4" />
+<img width="1920" height="1080" alt="Untitled design (6)" src="https://github.com/user-attachments/assets/0b3c457a-f022-4a67-a1b7-5a35c091c75c" />
+<img width="1920" height="1080" alt="Untitled design (7)" src="https://github.com/user-attachments/assets/b40927a2-ca10-4782-bb26-e15c4d612573" />
+<img width="1920" height="1080" alt="Sekka_App" src="https://github.com/user-attachments/assets/7a995523-3cc1-42a6-85a8-8dd699a6b2ba" />
